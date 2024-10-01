@@ -1,0 +1,16 @@
+{
+    "data": {
+      "amazonProduct": {
+        "rating": 4.3,
+        "ratingsTotal": 66046,
+        "ratingsBreakdown": {
+          "oneStarRatingsCount": 4623,
+          "twoStarRatingsCount": 2641,
+          "threeStarRatingsCount": 4623,
+          "fourStarRatingsCount": 10567,
+          "fiveStarRatingsCount": 43590
+        }
+      }
+    }
+  }
+  
