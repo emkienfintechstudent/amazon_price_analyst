@@ -7,15 +7,66 @@ import json
 # Sidebar sections
 st.sidebar.header("Nhận xét và đánh giá ")
 product_name = st.sidebar.text_input("Tên sản phẩm ")
-product_name = st.sidebar.text_input("ASIN")
-
-# Rating summary
-# star = st.sidebar.selectbox(
-#     "Select star",
-#     ("ALL",1,2,3,4,5),
-# )
+product_ASIN = st.sidebar.text_input("ASIN")
+ #read file 
 with open('rating.json', 'r') as f:
     data_rating = json.load(f)
+with open('product_information.json', 'r') as f:
+    data_product_information = json.load(f)
+
+# Tiêu đề và liên kết
+st.title("eufy Robot Vacuum 11S MAX")
+st.markdown("[Xem trên Amazon](https://www.amazon.com/eufy-Super-Thin-Super-Strong-Self-Charging-Medium-Pile/dp/B07R295MLS)")
+st.subheader("Thương hiệu: eufy")
+
+# Giá sản phẩm
+st.write("**Giá:** $249.99 USD")
+
+# Đặc điểm nổi bật
+st.subheader("Đặc điểm nổi bật của sản phẩm")
+features = [
+    "Compact and Quiet Operation: Thiết kế siêu mỏng, hoạt động êm ái, có thể sử dụng mọi lúc mà không gây ồn.",
+    "Extended Cleaning Performance: Khả năng làm sạch liên tục trong 100 phút trên sàn gỗ và thảm.",
+    "Intelligent Cleaning Power: Công nghệ BoostIQ tự động tăng sức hút khi cần.",
+    "Superior Protection and Efficiency: Cảm biến hồng ngoại tránh chướng ngại vật và công nghệ cảm biến chống rơi.",
+    "What You Get: Bao gồm máy, điều khiển từ xa, đế sạc, cọ làm sạch, và bảo hành 12 tháng."
+]
+st.write("\n".join(f"- {feature}" for feature in features))
+
+# Thông số kỹ thuật
+st.subheader("Thông số kỹ thuật sản phẩm")
+specifications = {
+    "Thương hiệu": "eufy",
+    "Model": "eufy 11S Max",
+    "Màu sắc": "Đen",
+    "Kích thước sản phẩm": "12.79\"L x 12.79\"W x 2.85\"H",
+    "Nguồn điện": "Pin",
+    "Dung tích": "600 ml",
+    "Tuổi thọ pin": "100 phút",
+    "Loại bề mặt": "Sàn cứng và thảm vừa",
+    "Đánh giá của khách hàng": "4.3 trên 5 sao",
+    "Xếp hạng bán chạy": "#782 trong Home & Kitchen",
+    "ASIN": "B07R295MLS"
+}
+st.table(specifications.items())
+
+# Đánh giá nổi bật
+st.subheader("Đánh giá nổi bật từ khách hàng")
+review = {
+    "Tiêu đề": "Great and Easy to Use!",
+    "Nội dung": "Tôi có một chú chó hay rụng lông, vì vậy tôi mua máy hút này với hy vọng sẽ gom được lông chó trên sàn hàng ngày. Những điểm nổi bật: Rất dễ sử dụng, hướng dẫn đơn giản.",
+    "Đánh giá": "5/5",
+    "Số lượt bình chọn hữu ích": "5313",
+    "Người đánh giá": "CF"
+}
+st.write(f"**Tiêu đề đánh giá:** {review['Tiêu đề']}")
+st.write(f"**Nội dung:** {review['Nội dung']}")
+st.write(f"**Đánh giá:** {review['Đánh giá']}")
+st.write(f"**Số lượt bình chọn hữu ích:** {review['Số lượt bình chọn hữu ích']}")
+st.write(f"**Người đánh giá:** {review['Người đánh giá']}")
+
+
+reviews_count = data_product_information['data']['amazonProduct']['reviewsTotal']
 rating_avg = data_rating['data']['amazonProduct']['rating']
 rating_count = data_rating['data']['amazonProduct']['ratingsTotal']
 star_1_count = data_rating['data']['amazonProduct']['ratingsBreakdown']['oneStarRatingsCount']
@@ -23,7 +74,6 @@ star_2_count= data_rating['data']['amazonProduct']['ratingsBreakdown']['twoStarR
 star_3_count= data_rating['data']['amazonProduct']['ratingsBreakdown']['threeStarRatingsCount']
 star_4_count= data_rating['data']['amazonProduct']['ratingsBreakdown']['fourStarRatingsCount']
 star_5_count= data_rating['data']['amazonProduct']['ratingsBreakdown']['fiveStarRatingsCount']
-print(data_rating['data']['amazonProduct'])
 if product_name : 
     st.header("Tổng quan về đánh giá của ${product_name}")
 else: 
@@ -32,7 +82,7 @@ else:
 rating_count_view, rating_avg_view, reviews_count_view ,star_5_count_view= st.columns(4)
 rating_count_view.metric("Số lượng đánh giá ", rating_count)
 rating_avg_view.metric("Đánh giá trung bình", rating_avg)
-reviews_count_view.metric("Số lượng review sản phẩm", rating_avg)
+reviews_count_view.metric("Số lượng review sản phẩm",reviews_count)
 star_5_count_view.metric("Số lượng đánh giá 5 sao", star_5_count)
 
 
@@ -58,41 +108,82 @@ max_index = sizes.index(max(sizes))
 explode = [0] * len(sizes)
 explode[max_index] = 0.1  # Đặt explode cho phần tử lớn nhất
 
+
+
 # Tạo biểu đồ pie
 fig1, ax1 = plt.subplots()
 ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
         shadow=True, startangle=90)
 ax1.axis('equal')  # Đảm bảo hình tròn
+ax1.set_title('So sánh giữa Số lượng đánh giá và Số lượng review sản phẩm')
+# tạo biểu đồ bar chart
+# Data values
+labels = ['Số lượng đánh giá', 'Số lượng review sản phẩm']
+values = [rating_count, reviews_count]
 
+# Create bar chart
+fig, ax = plt.subplots()
+ax.bar(labels, values, color=['#1f77b4', '#ff7f0e'])
+
+# Add titles and labels
+ax.set_ylabel('Số lượng')
+ax.set_title('Phân bố các mức đánh giá sản phẩm')
+rating_pie_chart, rating_review_bar_chart =  st.columns(2)
 # Hiển thị biểu đồ trên Streamlit
-st.pyplot(fig1)
-
-# with col3:
-#     df_product_rating_count = pd.DataFrame({
-#     'Số lượng đánh giá 1 sao': 1,
-#        'Số lượng đánh giá 1 sao': 2,
-#            'Số lượng đánh giá 1 sao': 3,
-#     'Số lượng đánh giá 1 sao': 4,
-#     'Số lượng đánh giá 1 sao': 5
+with rating_pie_chart:
+ st.pyplot(fig1)
+with rating_review_bar_chart:
+    st.pyplot(fig)
 
 
-# })
+
+
 if product_name : 
-    st.header("Tổng quan về nhận xét của ${product_name}")
+    st.header(f"Ước tính số lượng sản phẩm bán ra hàng tháng và doanh thu sản phẩm của {product_name}")
 else: 
-    st.header("Tổng quan về Nhận xét của sản phẩm")
+    st.header(f"Ước tính doanh số bán ra hàng tháng và doanh thu sản phẩm của {product_name}")
+sales_estimate= data_product_information['data']['amazonProduct']['salesEstimate']
+weekly_unit_sales = sales_estimate['weeklyUnitSales']
+monthly_unit_sales = sales_estimate['monthlyUnitSales']
+annual_unit_sales = sales_estimate['annualUnitSales']
+price = data_product_information['data']['amazonProduct']['price']['value']
+weekly_revenue_estimate = weekly_unit_sales*price
+monthly_revenue_estimate = monthly_unit_sales*price
+annual_revenue_estimate = annual_unit_sales*price
+# Dòng 1: Doanh số sản phẩm
+weekly_unit_sales = sales_estimate['weeklyUnitSales']
+monthly_unit_sales = sales_estimate['monthlyUnitSales']
+annual_unit_sales = sales_estimate['annualUnitSales']
+price = data_product_information['data']['amazonProduct']['price']['value']
 
-st.header("Chi tiết")
-# with open('reviews.json', 'r') as f:
-#     data = json.load(f)
+# Tính toán doanh thu
+weekly_revenue_estimate = weekly_unit_sales * price
+monthly_revenue_estimate = monthly_unit_sales * price
+annual_revenue_estimate = annual_unit_sales * price
+
+# Dòng 1: Doanh số
+weekly_unit_sales_view, monthly_unit_sales_view, annual_unit_sales_view = st.columns(3)
+weekly_unit_sales_view.metric(label="Doanh số ước tính hàng tuần", value=weekly_unit_sales)
+monthly_unit_sales_view.metric(label="Doanh số ước tính hàng tháng", value=monthly_unit_sales)
+annual_unit_sales_view.metric(label="Doanh số ước tính hàng năm", value=annual_unit_sales)
+
+# Dòng 2: Doanh thu
+weekly_revenue_view, monthly_revenue_view, annual_revenue_view = st.columns(3)
+weekly_revenue_view.metric(label="Doanh thu ước tính hàng tuần", value=f"${weekly_revenue_estimate:,.2f}")
+monthly_revenue_view.metric(label="Doanh thu ước tính hàng tháng", value=f"${monthly_revenue_estimate:,.2f}")
+annual_revenue_view.metric(label="Doanh thu ước tính hàng năm", value=f"${annual_revenue_estimate:,.2f}")
 
 
-# # Convert JSON data to a pandas DataFrame
-# df_reviews_sumary = pd.DataFrame(data)
-# st.write(df_reviews_sumary[['id', 'date', 'author_name', 'rating','review_title','review_text','location']])
-# col1, col2= st.columns(2)
-# with col1:
-#     st.header("A dog")
-# with col2:
-#     st.header("A dog")
+import matplotlib.pyplot as plt
+
+# Dữ liệu doanh số và doanh thu
+labels = ['Hàng tuần', 'Hàng tháng', 'Hàng năm']
+sales_data = [weekly_unit_sales, monthly_unit_sales, annual_unit_sales]
+revenue_data = [weekly_revenue_estimate, monthly_revenue_estimate, annual_revenue_estimate]
+
+
+
+
+
+
 
