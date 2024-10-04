@@ -1,44 +1,49 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# Tiêu đề chính của dashboard
-st.title("Pricing Strategy Dashboard")
-
-# Tải dữ liệu (bạn có thể thay thế bằng dữ liệu thực tế)
-# Dữ liệu bao gồm các cột: 'Product Name', 'Date', 'Price', 'Competitor Price'
+# Dữ liệu giả lập cho các sản phẩm
 data = {
-    'Product Name': ['Product A', 'Product A', 'Product B', 'Product B'],
-    'Date': ['2024-01-01', '2024-01-02', '2024-01-01', '2024-01-02'],
-    'Price': [100, 105, 200, 210],
-    'Competitor Price': [110, 108, 195, 205]
+    'Product': ['Product A', 'Product B', 'Product C'],
+    'Avg Rating': [4.5, 4.2, 3.8],
+    '5-Star Ratings': [1000, 800, 500],
+    'Weekly Sales': [150, 100, 50],
+    'Monthly Sales': [600, 400, 200],
+    'Yearly Sales': [7200, 4800, 2400],
+    'Price': [100, 80, 70]
 }
+
 df = pd.DataFrame(data)
 
-# Sidebar cho phép chọn sản phẩm
-st.sidebar.header("Chọn sản phẩm")
-selected_product = st.sidebar.selectbox("Chọn sản phẩm", df['Product Name'].unique())
+# Tính toán phân vị cho các yếu tố
+df['Rating Quantile'] = pd.qcut(df['Avg Rating'], 4, labels=False) + 1
+df['5-Star Quantile'] = pd.qcut(df['5-Star Ratings'], 4, labels=False) + 1
+df['Sales Quantile'] = pd.qcut(df['Yearly Sales'], 4, labels=False) + 1
+df['Price Quantile'] = pd.qcut(df['Price'], 4, labels=False) + 1
 
-# Hiển thị dữ liệu của sản phẩm được chọn
-st.header(f"Chi tiết sản phẩm: {selected_product}")
-product_data = df[df['Product Name'] == selected_product]
-st.write(product_data)
+# Đảo ngược phân vị giá (giá thấp thì tốt hơn)
+df['Price Quantile'] = 5 - df['Price Quantile']
 
-# Hiển thị biểu đồ giá theo thời gian
-st.header("Xu hướng giá theo thời gian")
-plt.figure(figsize=(10, 4))
-plt.plot(product_data['Date'], product_data['Price'], label="Giá sản phẩm")
-plt.plot(product_data['Date'], product_data['Competitor Price'], label="Giá đối thủ", linestyle="--")
-plt.xlabel("Ngày")
-plt.ylabel("Giá")
-plt.legend()
-st.pyplot(plt)
+# Tính tổng phân vị cho mỗi sản phẩm
+df['Total Quantile'] = df['Rating Quantile'] + df['5-Star Quantile'] + df['Sales Quantile'] + df['Price Quantile']
 
-# Phân tích chiến lược giá
-st.header("Phân tích chiến lược giá")
-avg_competitor_price = product_data['Competitor Price'].mean()
-st.write(f"Giá trung bình của đối thủ: {avg_competitor_price}")
+# Sắp xếp sản phẩm dựa trên tổng phân vị
+df = df.sort_values(by='Total Quantile', ascending=False)
 
-# Gợi ý chiến lược giá
-suggested_price = avg_competitor_price * 0.95  # Giảm giá 5% so với đối thủ
-st.write(f"Giá gợi ý cho {selected_product}: {suggested_price}")
+# Streamlit Dashboard
+st.title("Product Optimization Based on Quantiles")
+
+# Hiển thị dữ liệu của các sản phẩm
+st.write("Dữ liệu về các sản phẩm:")
+st.write(df[['Product', 'Avg Rating', '5-Star Ratings', 'Yearly Sales', 'Price']])
+
+# Hiển thị phân vị và tổng phân vị
+st.write("Phân vị của các sản phẩm:")
+st.write(df[['Product', 'Rating Quantile', '5-Star Quantile', 'Sales Quantile', 'Price Quantile', 'Total Quantile']])
+
+# Hiển thị sản phẩm tối ưu nhất dựa trên phân vị
+optimal_product = df.iloc[0]['Product']
+st.write(f"Sản phẩm tối ưu nhất dựa trên phân vị là: {optimal_product}")
+
+# Biểu đồ phân vị
+st.write("Biểu đồ phân vị của các sản phẩm:")
+st.bar_chart(df.set_index('Product')[['Rating Quantile', '5-Star Quantile', 'Sales Quantile', 'Price Quantile']])
