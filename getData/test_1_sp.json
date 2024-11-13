@@ -1,0 +1,107 @@
+{
+    "amazonProduct": {
+      "asin": "B08QZVSC8D",
+      "title": "Shark AV2501AE AI Robot Vacuum with XL HEPA Self-Empty Base, Bagless, 60-Day Capacity, LIDAR Navigation, Perfect for Pet Hair, Compatible with Alexa, Wi-Fi Connected, Carpet & Hard Floor, Black AI Dry",
+      "subtitle": "Visit the Shark Store",
+      "brand": "Shark",
+      "featureBullets": [
+        "INCREDIBLE SUCTION: Powerful Shark suction picks up dirt and debris on all floor types—tackling even the toughest of messes in your home.",
+        "NO SPOTS MISSED: With Matrix Clean Navigation, the vacuum cleans in a precise matrix grid taking multiple passes over dirt and debris for whole home, deep cleaning coverage.",
+        "IT EMPTIES ITSELF: The bagless, self-emptying base holds up to 60 days of dirt and debris while its true HEPA filtration captures and traps 99.97%* of dust and allergens (*down to .3 microns).",
+        "PRECISION HOME MAPPING: 360° LiDAR vision quickly and accurately maps your home so your robot can methodically clean detecting and avoiding objects in its path, day or night, adapting to everyday changes in the home.",
+        "PERFECT FOR HOMES WITH PETS: With powerful vacuum suction, Shark’s self-cleaning brushroll, and HEPA filtration system the robot captures pet hair, dust, dander and allergens with ease.",
+        "HANDS-FREE CONTROL: Set a cleaning schedule, initiate on-demand cleaning, or activate cleans all with sound of your voice using Amazon Alexa or Google Assistant.",
+        "EXTENDED RUNTIME: Up to 120 minutes of runtime for whole-home cleaning. And with Recharge and Resume, the robot will return to the dock, recharge, and can pick up where it left off.",
+        "BUILT, TESTED, AND PERFECTED: Shark puts their robots through rigorous testing to guarantee reliable, and high-quality performance.",
+        "WHAT’S INCLUDED: 1 Shark AI Ultra Robot, 1 XL HEPA Self-Empty Base, and 2 Side Brushes."
+      ],
+      "price": {
+        "value": 299.99
+      },
+      "isNew": true,
+      "isPrime": true,
+      "recommendedRetailPrice": {
+        "value": 649.99
+      },
+      "ratingsTotal": 3365,
+      "rating": 4.2,
+      "bestSellerRankings": [
+        {
+          "categoryName": "Home & Kitchen",
+          "rank": 7035
+        },
+        {
+          "categoryName": "Robotic Vacuums",
+          "rank": 12
+        }
+      ],
+      "ratingsBreakdown": {
+        "oneStarRatingsCount": 403,
+        "twoStarRatingsCount": 134,
+        "threeStarRatingsCount": 201,
+        "fourStarRatingsCount": 504,
+        "fiveStarRatingsCount": 2153
+      },
+      "technicalSpecifications": [
+        { "name": "Brand", "value": "Shark" },
+        { "name": "Model Name", "value": "Shark AV2501AE" },
+        { "name": "Special Feature", "value": "LiDAR Navigation, Bagless" },
+        { "name": "Color", "value": "Black/Bronze" },
+        { "name": "Product Dimensions", "value": "13.08\"L x 8.43\"W x 13.9\"H" },
+        { "name": "Customer Reviews", "value": "4.2 out of 5 stars, 3,365 ratings" },
+        { "name": "Best Sellers Rank", "value": "#7,035 in Home & Kitchen, #12 in Robotic Vacuums" },
+        { "name": "ASIN", "value": "B08QZVSC8D" },
+        { "name": "Style Number", "value": "AV2501AE" },
+        { "name": "UPC", "value": "622356574488" },
+        { "name": "Brand Name", "value": "Shark" },
+        { "name": "Included Components", "value": "2 Side Brushes, XL HEPA Filter, 1 Filter, Shark AI Robot, Self-Empty Base" },
+        { "name": "Power Source", "value": "Battery Powered" },
+        { "name": "Batteries are Included", "value": "Yes" },
+        { "name": "Compatible Devices", "value": "Amazon Echo, Google Home" },
+        { "name": "Form Factor", "value": "Robotic" },
+        { "name": "Control Method", "value": "Voice" },
+        { "name": "Filter Type", "value": "Foam" },
+        { "name": "Battery Life", "value": "120 minutes" },
+        { "name": "Battery Type", "value": "Lithium Ion" },
+        { "name": "Surface Recommendation", "value": "Hard Floor, Carpet" },
+        { "name": "Special Features", "value": "LiDAR Navigation, Bagless" },
+        { "name": "Controller Type", "value": "App Control, Voice Control" },
+        { "name": "Item Weight", "value": "15.2 Pounds" },
+        { "name": "Item Dimensions L x W x H", "value": "13.08\"L x 8.43\"W x 13.9\"H" }
+      ],
+      "url": "https://www.amazon.com/Shark-Mapping-Capacity-Bagless-AV2501AE/dp/B08QZVSC8D",
+      "categories": [
+        { "name": "Home & Kitchen", "subcategories": [] },
+        {
+          "name": "Vacuums & Floor Care",
+          "subcategories": [
+            { "name": "Vacuums" },
+            { "name": "Floor Buffers & Parts" },
+            { "name": "Carpet & Upholstery Cleaners & Accessories" },
+            { "name": "Steam Cleaners, Steam Mops & Accessories" }
+          ]
+        },
+        {
+          "name": "Vacuums",
+          "subcategories": [
+            { "name": "Canister Vacuums" },
+            { "name": "Upright Vacuums" },
+            { "name": "Robotic Vacuums" },
+            { "name": "Central Vacuum Systems" }
+          ]
+        },
+        { "name": "Robotic Vacuums", "subcategories": [] }
+      ],
+      "stockEstimate": {
+        "inStock": true,
+        "stockLevel": 999,
+        "availabilityMessage": "In Stock"
+      },
+      "salesEstimate": {
+        "weeklyUnitSales": 630,
+        "monthlyUnitSales": 2523,
+        "annualUnitSales": 30276
+      }
+    }
+  }
+  
