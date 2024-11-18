@@ -130,7 +130,7 @@ st.write(top_selling[['Title', 'Brand', 'Price', 'Annual Unit Sales']])
 # 7. Mối quan hệ giữa giá và đánh giá
 st.header("Mối quan hệ giữa Giá và Xếp hạng")
 fig, ax = plt.subplots()
-sns.scatterplot(data=data, x='Price', y='Rating Average', hue='Brand', ax=ax)
+sns.scatterplot(data=data, x='Price', y='Rating Average', ax=ax)
 ax.set_title("Mối quan hệ giữa giá và xếp hạng")
 st.pyplot(fig)
 

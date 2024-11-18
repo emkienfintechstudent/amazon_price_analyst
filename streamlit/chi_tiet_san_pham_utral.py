@@ -1,93 +1,114 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 # Tiêu đề trang
 st.title("Chi tiết sản phẩm: Shark AI Ultra Robot Vacuum")
 st.subheader("ASIN: B09T4YZGQR")
 data = pd.read_csv('../getData/product_data.csv')
 history_price= pd.read_csv('../getData/price_history.csv')
-history_price
-
 data_utral=data[data['ASIN']=='B09T4YZGQR']
+# Tách chuỗi dựa trên ký tự phân cách ";"
+features = data_utral['Feature Bullets'].values[0].split(";")
+
 
 # Phần mô tả sản phẩm
-st.header("1. Giới thiệu sản phẩm")
+st.header("Giới thiệu sản phẩm")
 last_price = history_price['price'].iloc[-1]
+st.image("../getData/utral.jpg",width = 300)
+
+# Hiển thị Markdown
 st.markdown(
     f"""
-    ### Tiêu đề sản phẩm: {data_utral['Title'].values[0]}
-     ### Hãng: {data_utral['Brand'].values[0]}
-          ### Hãng: {data_utral['Brand'].values[0]}
+    **Tiêu đề sản phẩm**: {data_utral['Title'].values[0]}  
+    **Hãng**: {data_utral['Brand'].values[0]}    
+    **Danh mục**: {data_utral['Categories'].values[0]}  
+    **Giá hiện tại**: {last_price}  
 
-    - **Hệ thống điều hướng thông minh (AI Navigation)**: Robot tự động lên lịch và dọn dẹp mọi ngóc ngách trong ngôi nhà.
-    """)
+    **Đặc điểm nổi bật:**  
+    """
+)
+# Duyệt qua các features và hiển thị từng dòng
+for feature in features:
+    st.markdown(f"- {feature.strip()}")  # Hiển thị từng feature và loại bỏ khoảng trắng thừa
+features = data_utral['Feature Bullets'].values[0].split(";")
+Technical_Specifications = data_utral['Technical Specifications'].values[0].split(";")
+st.markdown(
+        """
+**Tính năng đặc biệt:**
+            """)
+for Technical_Specification in Technical_Specifications:
+    st.markdown(f"- {Technical_Specification.strip()}") 
+st.markdown(
+       f"""
+**Xếp hạng của sản phẩm:** {data_utral['Title'].values[0]} 
+            """)
+st.header("Tổng quan về đánh giá sản phẩm")
 
-# Lịch sử giá
-st.header("Lịch sử giá sản phẩm")
-import pandas as pd
-import matplotlib.pyplot as plt
+col1, col2 = st.columns(2)
+col1.metric("Số lượng đánh giá", data_utral['Ratings Total'].values[0])
+col2.metric("Đánh giá trung bình", data_utral['Rating Average'].values[0])
 
-# Dữ liệu lịch sử giá
-data = {
-    "year": [2022, 2022, 2022, 2022, 2022, 2023, 2023, 2024, 2024],
-    "month": [5, 6, 10, 12, 12, 2, 7, 5, 11],
-    "day": [8, 6, 25, 7, 21, 20, 13, 15, 18],
-    "price": [581.47, 599.00, 599.99, 499.00, 298.00, 299.00, 599.99, 679.99, 349.99],
-}
-df = pd.DataFrame(data)
+one_star = data_utral['One Star Ratings Count'].values[0]
+two_star = data_utral['Two Star Ratings Count'].values[0]
+three_star = data_utral['Three Star Ratings Count'].values[0]
+four_star = data_utral['Four Star Ratings Count'].values[0]
+five_star = data_utral['Five Star Ratings Count'].values[0]
+total_rating = data_utral['Ratings Total'].values[0]
+# Calculate percentages for each star rating
+one_star_rate = round(one_star / total_rating * 100, 2)
+two_star_rate = round(two_star / total_rating * 100, 2)
+three_star_rate = round(three_star / total_rating * 100, 2)
+four_star_rate = round(four_star / total_rating * 100, 2)
+five_star_rate = 100 - one_star_rate - two_star_rate - three_star_rate - four_star_rate
+# Pie chart, where the slices will be ordered and plotted counter-clockwise:
+labels = '1 sao', '2 sao', '3 sao', '4 sao','5 sao'
+sizes = [one_star_rate, two_star_rate, three_star_rate, four_star_rate, five_star_rate]
+
+# Find the index of the largest slice
+max_index = sizes.index(max(sizes))
+
+# Dynamically set the explode value: 0.1 for the largest, 0 for others
+explode = [0.1 if i == max_index else 0 for i in range(len(sizes))]
+
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+        shadow=True, startangle=90)
+ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+# Add a title to the pie chart
+ax1.set_title("Phân bố đánh giá sản phẩm")
+
+# Display the pie chart in Streamlit
+st.pyplot(fig1)
+
+st.header("Lịch sử giá của sản phẩm")
 
 # Tạo cột thời gian
-df["date"] = pd.to_datetime(df[["year", "month", "day"]])
+history_price["date"] = pd.to_datetime(history_price[["year", "month", "day"]])
 
-# Biểu đồ giá
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(df["date"], df["price"], marker="o", linestyle="-", label="Giá Shark AI Ultra")
-ax.set_title("Lịch sử giá Shark AI Ultra Robot Vacuum", fontsize=16)
-ax.set_xlabel("Thời gian", fontsize=12)
-ax.set_ylabel("Giá (USD)", fontsize=12)
-ax.grid(True)
-ax.legend()
+# Vẽ biểu đồ lịch sử giá
+plt.figure(figsize=(10, 6))
+plt.plot(history_price['date'], history_price['price'], linestyle='-', label="Price")
+plt.title("Lịch sử giá sản phẩm")
+plt.xlabel("Ngày")
+plt.ylabel("Giá (USD)")
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
 
-st.pyplot(fig)
 
-# Phân tích giá
+min_price = history_price['price'].min()
+average_price = history_price['price'].mean()
+max_price = history_price['price'].max()
+current_price = last_price
+
 st.markdown(
     f"""
-    - **Giá thấp nhất**: ${df['price'].min():,.2f}
-    - **Giá cao nhất**: ${df['price'].max():,.2f}
-    - **Khoảng giá hiện tại**: ${df['price'].iloc[-1]:,.2f}
+    - **Giá trung bình:** ${average_price:,.2f}   
+    - **Giá thấp nhất:** ${min_price:,.2f}  
+    - **Giá cao nhất:** ${max_price:,.2f}  
+    - **Giá hiện tại:** ${current_price:,.2f}  
     """
 )
 
-# Phần đánh giá khách hàng
-st.header("Đánh giá khách hàng")
-st.markdown(
-    """
-    ### Tổng quan đánh giá:
-    - **Điểm trung bình**: ⭐ 4.3/5
-    - **Số lượng đánh giá**: 3,372 đánh giá
-    - **Tích cực**:
-      - "Sản phẩm tuyệt vời, hút bụi sạch và rất tiện lợi."
-      - "Điều hướng thông minh, hỗ trợ Alexa rất tiện dụng."
-    - **Tiêu cực**:
-      - "Giá hơi cao, nhưng chất lượng xứng đáng."
-    """
-)
 
-# Gợi ý mua hàng
-st.header("Gợi ý mua hàng")
-st.markdown(
-    """
-    ### Lời khuyên
-    - Nên mua vào các dịp giảm giá lớn như **Black Friday** hoặc **Cyber Monday**.
-    - Thường xuyên theo dõi giá, mức giá tốt nhất ghi nhận là $298.
-    """
-)
-
-# Liên hệ
-st.header("Liên hệ")
-st.markdown(
-    """
-    - **Xem sản phẩm trên Amazon**: [Shark AI Ultra Robot Vacuum](https://www.amazon.com/dp/B09T4YZGQR)
-    - **Liên hệ hỗ trợ**: support@sharkclean.com
-    """
-)
