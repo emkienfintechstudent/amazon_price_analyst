@@ -149,3 +149,12 @@ filtered_data = data[
 ]
 
 st.write(filtered_data[['Title', 'Brand', 'Price', 'Rating Average', 'Annual Unit Sales']])
+
+
+
+
+
+
+
+
+
