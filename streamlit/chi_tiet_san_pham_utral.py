@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 # Tiêu đề trang
 st.title("Chi tiết sản phẩm: Shark AI Ultra Robot Vacuum")
 st.subheader("ASIN: B09T4YZGQR")
-data = pd.read_csv('../getData/product_data.csv')
-history_price= pd.read_csv('../getData/price_history.csv')
+data = pd.read_csv('../getData/data/product_data.csv')
+history_price= pd.read_csv('../getData/data/price_history.csv')
 data_utral=data[data['ASIN']=='B09T4YZGQR']
 # Tách chuỗi dựa trên ký tự phân cách ";"
 features = data_utral['Feature Bullets'].values[0].split(";")

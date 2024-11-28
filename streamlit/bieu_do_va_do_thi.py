@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dữ liệu
-data = pd.read_csv('../getData/product_data.csv')
+data = pd.read_csv('../getData/data/product_data.csv')
 
 st.title("Biểu đồ và Đồ thị - Phân tích Robot hút bụi trên Amazon")
 

@@ -7,8 +7,8 @@ st.title("Chi tiết sản phẩm Amazon")
 st.subheader("Chọn sản phẩm để xem chi tiết")
 
 # Đọc dữ liệu sản phẩm và lịch sử giá
-data = pd.read_csv('../getData/product_data.csv')
-history_price = pd.read_csv('../getData/price_history.csv')
+data = pd.read_csv('../getData/data/product_data.csv')
+history_price = pd.read_csv('../getData/data/price_history.csv')
 
 # Thêm thanh chọn sản phẩm (ASIN hoặc tên sản phẩm)
 selected_asin = st.selectbox(

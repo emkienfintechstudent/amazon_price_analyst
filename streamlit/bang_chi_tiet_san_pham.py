@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Load dữ liệu
-data = pd.read_csv('../getData/product_data.csv')
+data = pd.read_csv('../getData/data/product_data.csv')
 
 # Set title
 st.title("Bảng chi tiết sản phẩm Robot hút bụi")
