@@ -4,7 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dữ liệu
-data = pd.read_csv('../getData/product_data.csv')
+data = pd.read_csv('../getData/data/product_data.csv')
+
+# Loại bỏ các giá trị inf và -inf trong các cột, thay bằng NaN
+data['Rating Average'] = data['Rating Average'].replace([float('inf'), -float('inf')], pd.NA)
+data['Annual Unit Sales'] = data['Annual Unit Sales'].replace([float('inf'), -float('inf')], pd.NA)
+data['Price'] = data['Price'].replace([float('inf'), -float('inf')], pd.NA)
+
+# Xử lý NaN, có thể thay thế NaN bằng giá trị trung bình hoặc loại bỏ các dòng chứa NaN
+# Bạn có thể chọn cách nào phù hợp với bài toán của mình:
+# - data = data.dropna(subset=['Price', 'Rating Average', 'Annual Unit Sales'])  # Loại bỏ dòng chứa NaN
+# - data['Price'] = data['Price'].fillna(data['Price'].mean())  # Thay thế NaN bằng giá trị trung bình
+# - data['Rating Average'] = data['Rating Average'].fillna(data['Rating Average'].mean())  # Thay thế NaN bằng giá trị trung bình
 
 # Set title
 st.title("Tổng quan thị trường Robot hút bụi")
@@ -34,7 +45,7 @@ col4.metric("Giá thấp nhất", f"${min_price:.2f}")
 col5.metric("Giá cao nhất", f"${max_price:.2f}")
 
 st.subheader("Doanh số ước tính")
-col6, col7= st.columns(2)  # Cột rộng hơn, cân đối
+col6, col7 = st.columns(2)
 
 col6.metric("Doanh số tuần", f"{total_sales_weekly:,.0f} sản phẩm")
 col7.metric("Doanh số tháng", f"{total_sales_monthly:,.0f} sản phẩm")
@@ -43,11 +54,10 @@ st.subheader("Tổng quan giá")
 
 # Top thương hiệu phổ biến
 st.header("Top thương hiệu phổ biến")
-print(data.columns)
 
 # 1. Danh sách thương hiệu phổ biến nhất
 st.subheader("Danh sách thương hiệu phổ biến nhất")
-top_brands_count = data['Brand'].value_counts().head(10)  # Top 10 thương hiệu
+top_brands_count = data['Brand'].value_counts().head(10)
 st.write("**Top 10 thương hiệu có nhiều sản phẩm máy hút bụi nhất:**")
 st.write(pd.DataFrame({
     "Thương hiệu": top_brands_count.index,
@@ -64,7 +74,7 @@ ax.set_ylabel("Số lượng sản phẩm")
 ax.set_xlabel("Thương hiệu")
 st.pyplot(fig)
 
-# 3.Chi tiết về thương hiệu phổ biến nhất
+# 3. Chi tiết về thương hiệu phổ biến nhất
 st.subheader(f"Chi tiết thương hiệu phổ biến nhất: {top_brands_count.index[0]}")
 most_popular_brand_data = data[data['Brand'] == top_brands_count.index[0]]
 avg_price = most_popular_brand_data['Price'].mean()
@@ -87,54 +97,14 @@ ax.set_ylabel("Xếp hạng trung bình")
 ax.set_xlabel("Thương hiệu")
 st.pyplot(fig)
 
-
-# 2. Phân phối giá
+# 6. Phân phối giá sản phẩm
 st.header("Phân phối giá của Robot hút bụi")
 fig, ax = plt.subplots()
 sns.histplot(data['Price'], bins=30, kde=True, ax=ax)
 ax.set_title("Phân phối giá các sản phẩm")
 st.pyplot(fig)
 
-# 3. Phân phối đánh giá
-st.header("Phân phối đánh giá và xếp hạng")
-fig, ax = plt.subplots()
-sns.histplot(data['Rating Average'], bins=10, kde=True, ax=ax)
-ax.set_title("Phân phối xếp hạng trung bình của sản phẩm")
-st.pyplot(fig)
-
-# 4. Thương hiệu phổ biến
-st.header("Thương hiệu phổ biến")
-top_brands = data['Brand'].value_counts().head(5)
-fig, ax = plt.subplots()
-sns.barplot(x=top_brands.index, y=top_brands.values, ax=ax)
-ax.set_title("Top 5 thương hiệu phổ biến")
-ax.set_ylabel("Số lượng sản phẩm")
-st.pyplot(fig)
-
-# 5. Phân khúc giá sản phẩm
-st.header("Phân khúc giá sản phẩm")
-low_price = data[data['Price'] < 100].shape[0]
-mid_price = data[(data['Price'] >= 100) & (data['Price'] <= 500)].shape[0]
-high_price = data[data['Price'] > 500].shape[0]
-
-col1, col2, col3 = st.columns(3)
-col1.metric("Sản phẩm giá thấp (<$100)", low_price)
-col2.metric("Sản phẩm giá trung bình ($100-$500)", mid_price)
-col3.metric("Sản phẩm giá cao (>$500)", high_price)
-
-# 6. Sản phẩm bán chạy nhất
-st.header("Sản phẩm bán chạy nhất")
-top_selling = data.sort_values(by="Annual Unit Sales", ascending=False).head(10)
-st.write(top_selling[['Title', 'Brand', 'Price', 'Annual Unit Sales']])
-
-# 7. Mối quan hệ giữa giá và đánh giá
-st.header("Mối quan hệ giữa Giá và Xếp hạng")
-fig, ax = plt.subplots()
-sns.scatterplot(data=data, x='Price', y='Rating Average', ax=ax)
-ax.set_title("Mối quan hệ giữa giá và xếp hạng")
-st.pyplot(fig)
-
-# 8. Bộ lọc tìm kiếm
+# 7. Bộ lọc tìm kiếm sản phẩm
 st.header("Tìm kiếm sản phẩm")
 brand_filter = st.selectbox("Chọn thương hiệu", options=data['Brand'].unique())
 price_min, price_max = st.slider("Chọn khoảng giá", float(data['Price'].min()), float(data['Price'].max()), (100.0, 500.0))
@@ -149,12 +119,3 @@ filtered_data = data[
 ]
 
 st.write(filtered_data[['Title', 'Brand', 'Price', 'Rating Average', 'Annual Unit Sales']])
-
-
-
-
-
-
-
-
-

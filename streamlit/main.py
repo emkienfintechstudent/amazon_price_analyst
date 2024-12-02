@@ -13,9 +13,9 @@ st.Page("san_pham_toi_uu.py", title="Sản phẩm tối ưu", icon="🌍"),  # "
 st.Page("chi_tiet_san_pham_utral.py", title="Chi tiết sản phẩm Shark AI Ultra ", icon="🔍"),  # "Tìm kiếm và Lọc" - Icon 🔍 (tìm kiếm)
 st.Page("chi_tiet_san_pham_khac.py", title="Chi tiết sản phẩm khác ", icon="🔍"),  # "Tìm kiếm và Lọc" - Icon 🔍 (tìm kiếm)
 st.Page("phan_tich_reviews.py", title="Phân tích review", icon="🔍"),  # "Tìm kiếm và Lọc" - Icon 🔍 (tìm kiếm)
-st.Page("tim_kiem_sp.py", title="Tìm kiếm và Lọc", icon="🔍"),  # "Tìm kiếm và Lọc" - Icon 🔍 (tìm kiếm)
-st.Page("bieu_do_va_do_thi.py", title="Biểu đồ và Đồ thị", icon="📈"),  # "Biểu đồ và Đồ thị" - Icon 📈 (thống kê, phân tích)
-st.Page("bang_chi_tiet_san_pham.py", title="Bảng chi tiết sản phẩm", icon="📋")  # "Bảng chi tiết sản phẩm" - Icon 📋 (danh sách, bảng biểu)
+# st.Page("tim_kiem_sp.py", title="Tìm kiếm và Lọc", icon="🔍"),  # "Tìm kiếm và Lọc" - Icon 🔍 (tìm kiếm)
+# st.Page("bieu_do_va_do_thi.py", title="Biểu đồ và Đồ thị", icon="📈"),  # "Biểu đồ và Đồ thị" - Icon 📈 (thống kê, phân tích)
+# st.Page("bang_chi_tiet_san_pham.py", title="Bảng chi tiết sản phẩm", icon="📋")  # "Bảng chi tiết sản phẩm" - Icon 📋 (danh sách, bảng biểu)
 
 ])
 

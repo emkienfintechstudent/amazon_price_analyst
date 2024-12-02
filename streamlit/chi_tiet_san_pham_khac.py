@@ -25,7 +25,7 @@ selected_product
 if not selected_product.empty:
     # Thông tin cơ bản của sản phẩm
     st.header("Giới thiệu sản phẩm")
-    st.image("../getData/utral.jpg", width=300)  # Thay đổi ảnh sản phẩm nếu cần
+    # st.image("../getData/utral.jpg", width=300)  # Thay đổi ảnh sản phẩm nếu cần
 
     # Lấy lịch sử giá của sản phẩm
     # product_price_history = history_price[history_price['ASIN'] == asin]
