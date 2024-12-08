@@ -8,278 +8,221 @@ from wordcloud import WordCloud
 import re
 import nltk
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
 from gensim import corpora
 from gensim.models import LdaModel
 import pyLDAvis.gensim_models
 
 # Tiêu đề trang
-st.title("Chi tiết sản phẩm: Shark AI Ultra Robot Vacuum")
+st.title("Chi Tiết Sản Phẩm: Shark AI Ultra Robot Vacuum")
 st.subheader("ASIN: B09T4YZGQR")
+
+# Đọc dữ liệu
 data = pd.read_csv('../getData/data/product_data.csv')
-history_price= pd.read_csv('../getData/data/price_history.csv')
-data_utral=data[data['ASIN']=='B09T4YZGQR']
-# Tách chuỗi dựa trên ký tự phân cách ";"
-features = data_utral['Feature Bullets'].values[0].split(";")
-
-
-# Phần mô tả sản phẩm
-st.header("Giới thiệu sản phẩm")
-last_price = history_price['price'].iloc[-1]
-st.image("../getData/utral.jpg",width = 300)
-
-# Hiển thị Markdown
-st.markdown(
-    f"""
-    **Tiêu đề sản phẩm**: {data_utral['Title'].values[0]}  
-    **Hãng**: {data_utral['Brand'].values[0]}    
-    **Danh mục**: {data_utral['Categories'].values[0]}  
-    **Giá hiện tại**: {last_price}  
-
-    **Đặc điểm nổi bật:**  
-    """
-)
-# Duyệt qua các features và hiển thị từng dòng
-for feature in features:
-    st.markdown(f"- {feature.strip()}")  # Hiển thị từng feature và loại bỏ khoảng trắng thừa
+history_price = pd.read_csv('../getData/data/price_history.csv')
+data_utral = data[data['ASIN'] == 'B09T4YZGQR']
 features = data_utral['Feature Bullets'].values[0].split(";")
 Technical_Specifications = data_utral['Technical Specifications'].values[0].split(";")
-st.markdown(
-        """
-**Tính năng đặc biệt:**
-            """)
-for Technical_Specification in Technical_Specifications:
-    st.markdown(f"- {Technical_Specification.strip()}") 
-st.markdown(
-       f"""
-**Xếp hạng của sản phẩm:** {data_utral['Title'].values[0]} 
-            """)
-st.header("Tổng quan về đánh giá sản phẩm")
+last_price = history_price['price'].iloc[-1]
 
+# Giới thiệu sản phẩm
+st.header("Giới Thiệu Sản Phẩm")
+st.image("../getData/utral.jpg", width=300)
+
+st.markdown(f"""
+    **Tiêu đề sản phẩm**: {data_utral['Title'].values[0]}  
+    **Hãng**: {data_utral['Brand'].values[0]}  
+    **Danh mục**: {data_utral['Categories'].values[0]}  
+    **Giá hiện tại**: ${last_price}  
+""")
+
+st.subheader("Đặc Điểm Nổi Bật")
+for feature in features:
+    st.markdown(f"- {feature.strip()}")
+
+st.subheader("Tính Năng Đặc Biệt")
+for tech_spec in Technical_Specifications:
+    st.markdown(f"- {tech_spec.strip()}")
+
+# Xếp hạng sản phẩm
+st.markdown(f"**Xếp hạng sản phẩm**: {data_utral['Title'].values[0]}")
+
+# Tổng quan về đánh giá sản phẩm
+st.header("Tổng Quan Đánh Giá Sản Phẩm")
 col1, col2 = st.columns(2)
 col1.metric("Số lượng đánh giá", data_utral['Ratings Total'].values[0])
 col2.metric("Đánh giá trung bình", data_utral['Rating Average'].values[0])
 
-one_star = data_utral['One Star Ratings Count'].values[0]
-two_star = data_utral['Two Star Ratings Count'].values[0]
-three_star = data_utral['Three Star Ratings Count'].values[0]
-four_star = data_utral['Four Star Ratings Count'].values[0]
-five_star = data_utral['Five Star Ratings Count'].values[0]
+# Tính tỷ lệ đánh giá theo sao
+ratings = data_utral[['One Star Ratings Count', 'Two Star Ratings Count', 'Three Star Ratings Count', 'Four Star Ratings Count', 'Five Star Ratings Count']].values[0]
 total_rating = data_utral['Ratings Total'].values[0]
-# Calculate percentages for each star rating
-one_star_rate = round(one_star / total_rating * 100, 2)
-two_star_rate = round(two_star / total_rating * 100, 2)
-three_star_rate = round(three_star / total_rating * 100, 2)
-four_star_rate = round(four_star / total_rating * 100, 2)
-five_star_rate = 100 - one_star_rate - two_star_rate - three_star_rate - four_star_rate
-# Pie chart, where the slices will be ordered and plotted counter-clockwise:
-labels = '1 sao', '2 sao', '3 sao', '4 sao','5 sao'
-sizes = [one_star_rate, two_star_rate, three_star_rate, four_star_rate, five_star_rate]
+rating_labels = ['1 sao', '2 sao', '3 sao', '4 sao', '5 sao']
+rating_sizes = [round(rating / total_rating * 100, 2) for rating in ratings]
+explode = [0.1 if i == rating_sizes.index(max(rating_sizes)) else 0 for i in range(len(rating_sizes))]
 
-# Find the index of the largest slice
-max_index = sizes.index(max(sizes))
-
-# Dynamically set the explode value: 0.1 for the largest, 0 for others
-explode = [0.1 if i == max_index else 0 for i in range(len(sizes))]
-
+# Biểu đồ phân bổ đánh giá
 fig1, ax1 = plt.subplots()
-ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-        shadow=True, startangle=90)
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-# Add a title to the pie chart
-ax1.set_title("Phân bố đánh giá sản phẩm")
-
-# Display the pie chart in Streamlit
+ax1.pie(rating_sizes, explode=explode, labels=rating_labels, autopct='%1.1f%%', shadow=True, startangle=90)
+ax1.axis('equal')
+ax1.set_title("Phân Bố Đánh Giá Sản Phẩm")
 st.pyplot(fig1)
 
-st.header("Lịch sử giá của sản phẩm")
-
-# Tạo cột thời gian
+# Lịch sử giá sản phẩm
+st.header("Lịch Sử Giá Sản Phẩm")
 history_price["date"] = pd.to_datetime(history_price[["year", "month", "day"]])
-
-# Vẽ biểu đồ lịch sử giá
 plt.figure(figsize=(10, 6))
 plt.plot(history_price['date'], history_price['price'], linestyle='-', label="Price")
-plt.title("Lịch sử giá sản phẩm")
+plt.title("Lịch Sử Giá Sản Phẩm")
 plt.xlabel("Ngày")
 plt.ylabel("Giá (USD)")
 plt.grid(True)
 plt.legend()
 st.pyplot(plt)
 
-
+# Thống kê giá
 min_price = history_price['price'].min()
 average_price = history_price['price'].mean()
 max_price = history_price['price'].max()
-current_price = last_price
+st.markdown(f"""
+    - **Giá trung bình**: ${average_price:,.2f}  
+    - **Giá thấp nhất**: ${min_price:,.2f}  
+    - **Giá cao nhất**: ${max_price:,.2f}  
+    - **Giá hiện tại**: ${last_price:,.2f}  
+""")
 
-st.markdown(
-    f"""
-    - **Giá trung bình:** ${average_price:,.2f}   
-    - **Giá thấp nhất:** ${min_price:,.2f}  
-    - **Giá cao nhất:** ${max_price:,.2f}  
-    - **Giá hiện tại:** ${current_price:,.2f}  
-    """
-)
+# Phân tích đánh giá
+st.title("Phân Tích Đánh Giá")
 
-
-# Tải dữ liệu
-st.title("Phân tích review")
+# Đọc dữ liệu reviews
 df = pd.read_csv('../getData/data/amazon_reviews_remove_space_remove_duplicate.csv')
 
-# Tổng quan về dữ liệu
-st.header('Tổng quan dữ liệu reviews')
-st.subheader('Tổng quan về số lượng')
+# Tổng quan về số lượng review
+st.header("Tổng Quan Số Lượng Đánh Giá")
+st.metric("Số lượng review", f"{df['Rating'].count()}/7630")
 
-# Tổng quan về bộ dữ liệu
-st.metric("Số lượng reviews lấy được", f"{df['Rating'].count()}/7630")
-
-# Tính số lượng review cho mỗi Rating
+# Biểu đồ số lượng review theo rating
 rating_counts = df['Rating'].value_counts().sort_index()
-
-# Vẽ biểu đồ số lượng review theo Rating
 plt.figure(figsize=(8, 6))
 sns.barplot(x=rating_counts.index, y=rating_counts.values, palette='Blues_d')
-plt.title("Số lượng review theo Rating")
+plt.title("Số Lượng Đánh Giá Theo Rating")
 plt.xlabel("Rating")
-plt.ylabel("Số lượng review")
+plt.ylabel("Số lượng đánh giá")
 plt.xticks(rotation=90)
-
-# Thêm chú thích số review vào mỗi cột
 for i in range(len(rating_counts)):
     plt.text(i, rating_counts.values[i] + 0.5, str(rating_counts.values[i]), ha='center', va='bottom')
-
-# Hiển thị biểu đồ trong Streamlit
 st.pyplot(plt)
 
-# Phân tích từ khóa và cảm nhận (Sentiment Analysis)
-st.header('Phân tích từ khóa và cảm nhận (Sentiment Analysis)')
-
-## TEXTBLOB
-st.subheader('Dựa theo thư viện textblob')
-# Tạo bản sao của DataFrame gốc
+# Phân tích cảm xúc với TextBlob
+st.header("Phân Tích Cảm Xúc (Sentiment Analysis)")
 df_textblob = df.copy()
 
-# Phân tích cảm xúc với TextBlob
 def get_sentiment(text):
     blob = TextBlob(text)
-    polarity = blob.sentiment.polarity
-    subjectivity = blob.sentiment.subjectivity
-    return polarity, subjectivity
+    return blob.sentiment.polarity, blob.sentiment.subjectivity
 
-# Áp dụng TextBlob lên cột 'Body' của dữ liệu
 df_textblob['polarity'], df_textblob['subjectivity'] = zip(*df_textblob['Body'].apply(get_sentiment))
+df_textblob['sentiment'] = df_textblob['polarity'].apply(lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
 
-# Phân loại cảm xúc dựa trên polarity
-df_textblob['sentiment_textblob'] = df_textblob['polarity'].apply(lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
-
-# Hiển thị bảng kết quả phân tích cảm xúc từ TextBlob
-st.subheader('Kết quả phân tích cảm xúc từ TextBlob')
-st.write(df_textblob[['Rating', 'Body', 'polarity', 'subjectivity', 'sentiment_textblob']].head(10))  # Hiển thị 10 dòng đầu tiên
-
-# Tính trung bình độ phân cực (polarity)
+# Tóm tắt cảm xúc
 average_polarity = df_textblob['polarity'].mean()
-# Tính trung bình độ chủ quan 
 average_subjectivity = df_textblob['subjectivity'].mean()
 
-# Áp dụng if-else để phân loại cảm xúc trung bình
 if average_polarity > 0.1:
     overall_sentiment = 'Tích cực'
 elif average_polarity < -0.1:
     overall_sentiment = 'Tiêu cực'
 else:
     overall_sentiment = 'Bình thường'
-# Áp dụng if-else để phân loại tính chủ quan trung bình
+
 if average_subjectivity > 0.5:
     overall_subjectivity = 'Chủ quan'
 elif average_subjectivity > 0.4:
-        overall_subjectivity = 'Mức độ chủ quan ở mức trung bình'
-
+    overall_subjectivity = 'Mức độ chủ quan'
 else:
     overall_subjectivity = 'Khách quan'
-# Hiển thị kết quả độ phân cực trung bình và phân loại cảm xúc
-st.subheader('Tóm tắt cảm xúc trung bình của các bài đánh giá')
-st.write(f"Trung bình độ phân cực cảm xúc: {average_polarity:.2f}")
-st.write(f"Cảm xúc trung bình: {overall_sentiment}")
-st.write(f"Trung bình mức độ chủ quan: {average_subjectivity:.2f}")
-st.write(f"Cảm xúc trung bình: {overall_subjectivity}")
 
-# Vẽ biểu đồ phân bố cảm xúc (TextBlob)
-st.subheader('Biểu đồ phân bố cảm xúc (TextBlob)')
-sentiment_counts = df_textblob['sentiment_textblob'].value_counts()
+st.markdown(f"""
+    **Trung bình độ phân cực**: {average_polarity:.2f}  
+    **Cảm xúc trung bình**: {overall_sentiment}  
+    **Trung bình mức độ chủ quan**: {average_subjectivity:.2f}  
+    **Tính chất chủ quan**: {overall_subjectivity}  
+""")
 
+# Biểu đồ phân bố cảm xúc
+sentiment_counts = df_textblob['sentiment'].value_counts()
 plt.figure(figsize=(8, 6))
 sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='coolwarm')
-plt.title('Phân bố cảm xúc trong các bài đánh giá (TextBlob)')
+plt.title('Phân Bố Cảm Xúc Các Đánh Giá')
 plt.xlabel('Cảm xúc')
-plt.ylabel('Số lượng review')
-
-# Hiển thị biểu đồ trong Streamlit
+plt.ylabel('Số lượng')
 st.pyplot(plt)
 
-# Tóm tắt tổng quan về tỷ lệ cảm xúc từ TextBlob
-# Vẽ biểu đồ phân bố cảm xúc (TextBlob)
-st.subheader('Biểu đồ phân bố cảm xúc (TextBlob)')
-sentiment_counts = df_textblob['sentiment_textblob'].value_counts()
+# Phân tích từ khóa với TF-IDF
+st.header("Phân Tích Từ Khóa Với TF-IDF")
 
-# Sử dụng palette 'muted' từ seaborn
-colors = sns.color_palette("muted", n_colors=len(sentiment_counts))
+# Tiền xử lý văn bản và tính toán TF-IDF
+reviews_cleaned = df['Body'].str.lower().str.replace(r'[^\w\s]', '', regex=True)
+vectorizer = TfidfVectorizer(stop_words='english', max_features=20)
+X_tfidf = vectorizer.fit_transform(reviews_cleaned)
 
-# Vẽ biểu đồ tròn với màu sắc hài hòa
-plt.figure(figsize=(7, 7))
-plt.pie(sentiment_counts.values, labels=sentiment_counts.index, autopct='%1.1f%%', startangle=90, colors=colors)
-plt.title('Tỷ lệ phân bố cảm xúc trong các bài đánh giá')
-plt.axis('equal')  # Đảm bảo biểu đồ tròn là hình tròn
-plt.show()
+# Lấy từ khóa TF-IDF
+words_tfidf = vectorizer.get_feature_names_out()
+tfidf_scores = X_tfidf.sum(axis=0).A1
+tfidf_word_freq = pd.DataFrame(list(zip(words_tfidf, tfidf_scores)), columns=['word', 'tfidf_score'])
+tfidf_word_freq = tfidf_word_freq.sort_values(by='tfidf_score', ascending=False)
 
+# Vẽ biểu đồ cột ngang
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.barh(tfidf_word_freq['word'].head(20), tfidf_word_freq['tfidf_score'].head(20), color='lightcoral')
 
-# Hiển thị biểu đồ trong Streamlit
-st.pyplot(plt)
+# Thêm nhãn dữ liệu
+for index, value in enumerate(tfidf_word_freq['tfidf_score'].head(20)):
+    ax.text(value, index, f'{value:.3f}', va='center', ha='left', fontsize=10)
 
+ax.set_xlabel('TF-IDF Score')
+ax.set_ylabel('Words')
+ax.set_title('Top 20 Từ Khóa Dựa Trên TF-IDF')
+ax.invert_yaxis()
 
+st.pyplot(fig)
 
-st.header('Tạo các phân nhóm dựa trên các yếu tố quan trọng')
+# Phân tích chủ đề với LDA
+st.header("Phân Tích Chủ Đề với LDA")
 
-st.markdown('# Word cloud dựa trên title và body')
+lda = LatentDirichletAllocation(n_components=5, random_state=42)
+lda.fit(X_tfidf)
 
-# Lấy dữ liệu từ cột 'Title'
-title_text = " ".join(df['Title'].astype(str))  # Kết hợp tất cả tiêu đề lại thành chuỗi
+# Hiển thị kết quả LDA
+n_top_words = 10
+words = vectorizer.get_feature_names_out()
+lda_results = ""
+for topic_idx, topic in enumerate(lda.components_):
+    lda_results += f"**Chủ đề #{topic_idx + 1}:**\n"
+    topic_words = " ".join([words[i] for i in topic.argsort()[:-n_top_words - 1:-1]])
+    lda_results += f"{topic_words}\n\n"
 
-# Tạo WordCloud từ tiêu đề
-title_wordcloud = WordCloud(
-    width=800, height=400, 
-    background_color="white", 
-    stopwords=stopwords.words('english'),  # Loại bỏ stopwords tiếng Anh
-    colormap="Blues", max_words=100
-).generate(title_text)
-st.subheader("Word Cloud từ Tiêu đề Đánh giá")
+st.text(lda_results)
 
-# Hiển thị WordCloud cho tiêu đề
+# Tạo WordCloud từ Tiêu Đề và Nội Dung
+st.header("Word Cloud Phân Tích Tiêu Đề và Nội Dung")
+
+# Từ khóa từ Tiêu đề
+title_text = " ".join(df['Title'].astype(str))
+title_wordcloud = WordCloud(width=800, height=400, background_color="white", stopwords=stopwords.words('english'), colormap="Blues", max_words=100).generate(title_text)
+
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.imshow(title_wordcloud, interpolation="bilinear")
 ax.axis("off")
-ax.set_title("Word Cloud từ Tiêu đề Đánh giá", fontsize=16)
+ax.set_title("Word Cloud từ Tiêu Đề Đánh Giá")
 st.pyplot(fig)
 
-# Tạo WordCloud từ Body
-st.subheader("Word Cloud từ nội dung đánh giá")
+# Từ khóa từ Nội dung
+body_text = " ".join(df['Body'].astype(str))
+body_wordcloud = WordCloud(width=800, height=400, background_color="white", stopwords=stopwords.words('english'), colormap="viridis", max_words=100).generate(body_text)
 
-# Lấy dữ liệu từ cột 'Body'
-body_text = " ".join(df['Body'].astype(str))  # Kết hợp tất cả nội dung lại thành chuỗi
-
-# Tạo WordCloud từ nội dung đánh giá
-body_wordcloud = WordCloud(
-    width=800, height=400, 
-    background_color="white", 
-    stopwords=stopwords.words('english'),  # Loại bỏ stopwords tiếng Anh
-    colormap="viridis", max_words=100
-).generate(body_text)
-
-# Hiển thị WordCloud cho nội dung
 fig2, ax2 = plt.subplots(figsize=(10, 6))
 ax2.imshow(body_wordcloud, interpolation="bilinear")
 ax2.axis("off")
-ax2.set_title("Word Cloud từ Nội dung Đánh giá", fontsize=16)
+ax2.set_title("Word Cloud từ Nội Dung Đánh Giá")
 st.pyplot(fig2)

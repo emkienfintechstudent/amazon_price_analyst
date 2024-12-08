@@ -67,7 +67,7 @@ colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#8A2BE2']  # Các màu s�
 
 # Tạo biểu đồ thanh
 plt.figure(figsize=(10, 6))
-
+top_5_products[['ASIN','Title']].to_csv('../getData/data/top5_product.csv',index=False)
 # Vẽ biểu đồ thanh với màu sắc cụ thể cho từng sản phẩm
 plt.bar(top_5_products['ASIN'], top_5_products['total_score'], color=colors)
 
